@@ -1,2 +1,2 @@
 # webglworld
-Dynamic webGL terrain of the any place of the world
+Dynamic WebGL terrain of the any place of the world
