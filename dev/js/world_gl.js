@@ -36,9 +36,11 @@ GLWorld.World = function (aOpt) {
 	this.main = null;
 	
 	var iAreaXml = null;
+	*/
 	var iProjUnit = null;
-	this.center = {x : 0, y : 0, srid : ThreeD.Coord.srid3d, mFac : {x : 1, y : 1}, mXY : {x : null, y : null}};
-	
+	this.center = {lat : 0, lon : 0, x: 0, y: 0, mFac : {x : 1, y : 1}};
+	//this.center = {x : 0, y : 0, mFac : {x : 1, y : 1}, mXY : {x : null, y : null}};
+	/*
 	var iVR = null;
 	
 	this.map = null;
@@ -610,44 +612,21 @@ GLWorld.World = function (aOpt) {
 			//MultiplayerTools.getClients();
 		}
 	}
+	*/
+	function setCenter (aValues) {		
+		self.center.lat = aValues.lat;
+		self.center.lon = aValues.lon;
 		
-	function setCenter (aX, aY) {
-		var cx = aX;
-		var cy = aY;
-		if (cx === null || cy === null) {
-			if (iAreaXml) {
-				var cCoord = iXmlTools.getChildNodeValue(iAreaXml.getElementsByTagName("AREA3D_ITEM").item(0), "CENTER_COORD");
-				if (cCoord) {
-					var toks = cCoord.split(",");
-					cx = Number(toks[0].substring(1));
-					cy = Number(toks[1]) * (-1);
-				}
-			}
-		}
+		var xy = GLWorld.Coord.WGS84ToMerc({x: self.center.lon, y: self.center.lat});
 		
-		if (cx === null || cy === null) {
-			cx = 0;
-			cy = 0;
-		}
+		self.center.x = xy.x;
+		self.center.y = xy.y;
 		
-		self.center.x = cx;
-		self.center.y = cy;
-						
-		if (self.center.srid !== ThreeD.Coord.srid.merc) {
-			self.center.mXY.x = cx;
-			self.center.mXY.y = cy;
-			
-			self.center.mFac.x = 1;
-			self.center.mFac.y = 1;
-		}
-		else {
-			self.center.mXY.x = null;
-			self.center.mXY.y = null;			
-			
-			var mFacXY = getMFac(self.center.x, self.center.y, self.center.srid);
-			self.center.mFac.x = mFacXY.x;
-			self.center.mFac.y = mFacXY.y;
-		}
+		var mFacXY = getMFac(self.center.x, self.center.y, null);
+		self.center.mFac.x = mFacXY.x;
+		self.center.mFac.y = mFacXY.y;
+				
+		console.log(self.center);
 	}
 	
 	function getMFac (aX, aY, aSrid) {
@@ -657,7 +636,7 @@ GLWorld.World = function (aOpt) {
 		iProjUnit.setCoords(aX, aY, aSrid);
 		return iProjUnit.getProjUnitXY();
 	}
-	*/
+	
 	this.setCameraPosition = function (aCoord) {
 		var offs = null;
 		if (aCoord.offs) {
@@ -704,6 +683,11 @@ GLWorld.World = function (aOpt) {
 			initPlain: true
 		});		
 		//iTerrain.onTerrain = true;
+		
+		setCenter({
+			lat: 37.811158,
+			lon: -122.477316
+		})
 				
 		self.setCameraPosition({
 			offs: {x: 0, y: 0},

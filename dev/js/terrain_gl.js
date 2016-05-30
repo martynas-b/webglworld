@@ -32,6 +32,7 @@ GLWorld.Terrain = function (aOpt) {
 			if (aOpt.initPlain) {
 				initPlain();
 			}
+			/*
 			else if (aOpt.areaCoords) {
 				iTerrAttrs.areaCoords = aOpt.areaCoords;
 				
@@ -40,7 +41,11 @@ GLWorld.Terrain = function (aOpt) {
 					kmsTerr = iKMSTerr.DTM10;
 				}
 				createTerrain(iType.terr, kmsTerr);
-			}			
+			}
+			*/
+			else if (aOpt.worldCenter) {
+				
+			}
 		}
 	};
 	

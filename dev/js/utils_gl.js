@@ -2,35 +2,7 @@ window.GLWorld = window.GLWorld || {};
 
 GLWorld.Tools = GLWorld.Tools || {};
 
-GLWorld.Coord = {
-		srid: {merc: "2000004", utm: "82344"},
-		epsg: {merc: "EPSG:MercatorWGS84Spherical", latlon: "EPSG:4326"}
-	};
-
-GLWorld.Coord.srid3d = GLWorld.Coord.srid.merc;
-
-GLWorld.Coord.findSRID = function (aX, aY, aSrid) {
-	var srid = GLWorld.Coord.srid.merc;		
-	
-	if (aSrid === GLWorld.Coord.srid.merc) {
-		if ((aX > 786749) && (aX < 1765143) && (aY > 7098362) && (aY < 8076756)) {
-			srid = GLWorld.Coord.srid.utm;
-		}
-		else {
-			srid = GLWorld.Coord.srid.merc;
-		}
-	}
-	else if (aSrid === GLWorld.Coord.srid.utm) {
-		if ((aX > 442705) && (aX < 899409) && (aY > 6030643) && (aY < 6407475)) {
-			srid = GLWorld.Coord.srid.utm;
-		}
-		else {
-			srid = GLWorld.Coord.srid.merc;
-		}
-	}
-	
-	return srid;		
-};
+GLWorld.Coord = {};
 
 proj4.defs("EPSG:32632", "+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
 
@@ -102,19 +74,6 @@ GLWorld.Coord.findMinMax = function (aCoords) {
 		}
 	}
 	return {minX: minX, maxX: maxX, minY: -maxY, maxY: -minY};
-};
-
-GLWorld.Paths = {
-	projectPath: "/lpilot/Playingmondo/",
-	path3d: "/lpilot/Playingmondo/3D/"
-};
-
-GLWorld.Tools.isUndefined = function (val) {
-	var res = true;
-	if (typeof val !== "undefined"){
-		res = false;
-	}
-	return res;
 };
 
 GLWorld.Tools.loadCollada = function (aOpt, aCallBack) {
@@ -251,37 +210,6 @@ GLWorld.Tools.addWndStoring = function (aDialogId, aStorageId) {
 	});
 };
 
-GLWorld.Tools.hashToObj = function () {
-	var initpObj = null;
-	var hash = window.location.hash;	
-	if (!hash){
-		hash = iCookie.get("H", true);
-		if (hash) {
-			window.location.hash = hash;
-		}
-	}
-	if (hash) {
-		if (hash.charAt(0) === "#") {
-			hash = hash.substring(1);
-		}
-		var hashArr = hash.split("&");
-		$.each(hashArr, function(i, val){
-			var v = val.split("=");
-			if (v.length > 1){
-				if (!initpObj){
-					initpObj = {};
-				}
-				var value = v[1];
-				if (!isNaN(Number(value))){
-					value = Number(v[1]);
-				}
-				initpObj[v[0]] = value;
-			}
-		});
-	}
-	return initpObj;	
-};
-
 GLWorld.Tools.displayObj = function (aObj, aParam) {
 	if (aObj) {
 		aObj.style.display = aParam;
@@ -290,43 +218,6 @@ GLWorld.Tools.displayObj = function (aObj, aParam) {
 
 GLWorld.Tools.displayObjById = function (aId, aParam) {
 	GLWorld.Tools.displayObj(document.getElementById(aId), aParam);
-};
-
-GLWorld.Tools.findRowInx = function (aXmlDoc, aRowName, aNodeName, aNodeValue/*, aLowCase*/) {	
-	var inx = -1;
-	if (aXmlDoc) {
-		var i = 0;
-		var rows = aXmlDoc.getElementsByTagName(aRowName);
-		var lng = rows.length;
-		for (i = 0; i < lng; i++) {
-			var val = iXmlTools.getChildNodeValue(rows.item(i), aNodeName);
-			/*
-			if (val != null && aLowCase) {
-				val = val.toLowerCase();
-			}
-			*/
-			if (val == aNodeValue) {
-				inx = i;
-				break;
-			}
-		}
-	}
-	return inx;
-};
-
-GLWorld.Tools.getParamValue = function (aRow, aName) {
-	var value = null;		
-	
-	$("POI_PARAMS_ITEM", $("POI_PARAMS", aRow).eq(0)).each(function() {
-		var item = this;
-		var pName = $("PARAM_NAME", item).eq(0).text();
-		if (pName === aName) {
-			value = $("PARAM_VALUE", item).eq(0).text();
-			return false;
-		}
-	});
-	
-	return value;
 };
 
 GLWorld.Tools.deg2rad = function (aDeg) {
@@ -369,7 +260,9 @@ function ProjUnit () {
 	this.setCoords = function (aX, aY, aSrid) {
 		iCoords.x = aX;
 		iCoords.y = aY;
-		iCoords.srid = aSrid;
+		if (aSrid) {
+			iCoords.srid = aSrid;
+		}
 	};
 	
 	this.getProjUnitXY = function () {
@@ -434,7 +327,7 @@ function ProjUnit () {
 		return res;
 	}
 }
-
+/*
 //STRINGS
 GLWorld.Tools.Strings = function () {
 	var url = GLWorld.Paths.path3d + "xml/strings.xml";
@@ -481,7 +374,7 @@ GLWorld.Listener = function () {
 		}
 	};
 };
-
+*/
 function isTouch(){
 	var touch = 0;
 	if (("ontouchstart"in window) || navigator.msMaxTouchPoints){
