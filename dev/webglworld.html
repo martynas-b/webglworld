@@ -10,8 +10,12 @@
 		<script src="js/lib/jquery-2.2.4.min.js"></script>
 		<script src="js/lib/proj4.js"></script>
 		<script src="js/lib/three-r77/build/three.min.js"></script>
+		<script src="js/lib/three-GLWorld/PointerLockControls.js"></script>
 		
+		<script src="js/utils_gl.js"></script>
+		<script src="js/terrain_gl.js"></script>
 		<script src="js/world_gl.js"></script>
+		
 		<script>
 			function startGLWorld() {
 				var glworld = new GLWorld.World({
@@ -21,6 +25,9 @@
 		</script>
 	</head>
 	<body onload="startGLWorld()">
-		
+		<div id="container_3d" style="width: 100%; height: 100%"/>
+		<div id="instructions_no_pl" style="display:none;position:absolute;width:100%;text-align:center;font-size:11px;color:rgba(255,255,255,0.5);">
+			W, A, S, D - Move, SPACE - Jump, MOUSE down & move - Look around<br/>1, 2 - Camera height
+		</div>
 	</body>
 </html>

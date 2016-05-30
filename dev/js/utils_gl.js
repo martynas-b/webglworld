@@ -1,31 +1,31 @@
-window.ThreeD = window.ThreeD || {};
+window.GLWorld = window.GLWorld || {};
 
-ThreeD.Tools = ThreeD.Tools || {};
+GLWorld.Tools = GLWorld.Tools || {};
 
-ThreeD.Coord = {
+GLWorld.Coord = {
 		srid: {merc: "2000004", utm: "82344"},
 		epsg: {merc: "EPSG:MercatorWGS84Spherical", latlon: "EPSG:4326"}
 	};
 
-ThreeD.Coord.srid3d = ThreeD.Coord.srid.merc;
+GLWorld.Coord.srid3d = GLWorld.Coord.srid.merc;
 
-ThreeD.Coord.findSRID = function (aX, aY, aSrid) {
-	var srid = ThreeD.Coord.srid.merc;		
+GLWorld.Coord.findSRID = function (aX, aY, aSrid) {
+	var srid = GLWorld.Coord.srid.merc;		
 	
-	if (aSrid === ThreeD.Coord.srid.merc) {
+	if (aSrid === GLWorld.Coord.srid.merc) {
 		if ((aX > 786749) && (aX < 1765143) && (aY > 7098362) && (aY < 8076756)) {
-			srid = ThreeD.Coord.srid.utm;
+			srid = GLWorld.Coord.srid.utm;
 		}
 		else {
-			srid = ThreeD.Coord.srid.merc;
+			srid = GLWorld.Coord.srid.merc;
 		}
 	}
-	else if (aSrid === ThreeD.Coord.srid.utm) {
+	else if (aSrid === GLWorld.Coord.srid.utm) {
 		if ((aX > 442705) && (aX < 899409) && (aY > 6030643) && (aY < 6407475)) {
-			srid = ThreeD.Coord.srid.utm;
+			srid = GLWorld.Coord.srid.utm;
 		}
 		else {
-			srid = ThreeD.Coord.srid.merc;
+			srid = GLWorld.Coord.srid.merc;
 		}
 	}
 	
@@ -34,23 +34,23 @@ ThreeD.Coord.findSRID = function (aX, aY, aSrid) {
 
 proj4.defs("EPSG:32632", "+proj=utm +zone=32 +ellps=WGS84 +datum=WGS84 +units=m +no_defs");
 
-ThreeD.Coord.mercToWGS84 = function (aCoord) {
-	return ThreeD.Coord.convert("EPSG:3857", "WGS84", aCoord);
+GLWorld.Coord.mercToWGS84 = function (aCoord) {
+	return GLWorld.Coord.convert("EPSG:3857", "WGS84", aCoord);
 };
 
-ThreeD.Coord.WGS84ToMerc = function (aCoord) {
-	return ThreeD.Coord.convert("WGS84", "EPSG:3857", aCoord);
+GLWorld.Coord.WGS84ToMerc = function (aCoord) {
+	return GLWorld.Coord.convert("WGS84", "EPSG:3857", aCoord);
 };
 
-ThreeD.Coord.WGS84ToUTM = function (aCoord) {
-	return ThreeD.Coord.convert("WGS84", "EPSG:32632", aCoord);
+GLWorld.Coord.WGS84ToUTM = function (aCoord) {
+	return GLWorld.Coord.convert("WGS84", "EPSG:32632", aCoord);
 };
 
-ThreeD.Coord.convert = function (aFrom, aTo, aCoord) {
+GLWorld.Coord.convert = function (aFrom, aTo, aCoord) {
 	return proj4(aFrom, aTo, {x: aCoord.x, y: aCoord.y});
 };
 
-ThreeD.Coord.findMinMax = function (aCoords) {
+GLWorld.Coord.findMinMax = function (aCoords) {
 	var minX = 0;
 	var maxX = 0;
 	var minY = 0;
@@ -104,12 +104,12 @@ ThreeD.Coord.findMinMax = function (aCoords) {
 	return {minX: minX, maxX: maxX, minY: -maxY, maxY: -minY};
 };
 
-ThreeD.Paths = {
+GLWorld.Paths = {
 	projectPath: "/lpilot/Playingmondo/",
 	path3d: "/lpilot/Playingmondo/3D/"
 };
 
-ThreeD.Tools.isUndefined = function (val) {
+GLWorld.Tools.isUndefined = function (val) {
 	var res = true;
 	if (typeof val !== "undefined"){
 		res = false;
@@ -117,7 +117,7 @@ ThreeD.Tools.isUndefined = function (val) {
 	return res;
 };
 
-ThreeD.Tools.loadCollada = function (aOpt, aCallBack) {
+GLWorld.Tools.loadCollada = function (aOpt, aCallBack) {
 	var loader = new THREE.ColladaLoader();
 	loader.options.convertUpAxis = true;
 				
@@ -174,7 +174,7 @@ ThreeD.Tools.loadCollada = function (aOpt, aCallBack) {
 	} );
 };
 
-ThreeD.Tools.removeChildren = function (aObject) {
+GLWorld.Tools.removeChildren = function (aObject) {
 	if (aObject) {
 		var i, lng = aObject.children.length;
 		for ( i = lng - 1; i >= 0 ; i -- ) {
@@ -184,7 +184,7 @@ ThreeD.Tools.removeChildren = function (aObject) {
 	}
 };
 
-ThreeD.Tools.showUITooltip = function (aId, aMsg, aTime, aPos) {
+GLWorld.Tools.showUITooltip = function (aId, aMsg, aTime, aPos) {
 	var target = $("#" + aId);
 	target.attr("title", "");
 	target.tooltip({content: aMsg,
@@ -201,7 +201,7 @@ ThreeD.Tools.showUITooltip = function (aId, aMsg, aTime, aPos) {
 	target.tooltip("open");
 };
 
-ThreeD.Tools.showUIDialog =function (aTexts, aSize, aPos, aButtons, aClose, aXY) {
+GLWorld.Tools.showUIDialog =function (aTexts, aSize, aPos, aButtons, aClose, aXY) {
 	var div = $("<div id='" + aTexts.id + "'></div>").html(aTexts.html);
 	div.dialog({ title: aTexts.title, resizable: false });	
 	if (aSize) {
@@ -230,7 +230,7 @@ ThreeD.Tools.showUIDialog =function (aTexts, aSize, aPos, aButtons, aClose, aXY)
 	div.dialog("open");
 };
 
-ThreeD.Tools.getJSONFromStorage = function (aStorageId) {
+GLWorld.Tools.getJSONFromStorage = function (aStorageId) {
 	var json = null;
 	var storage = localStorage.getItem(aStorageId);
 	if (storage) {
@@ -239,19 +239,19 @@ ThreeD.Tools.getJSONFromStorage = function (aStorageId) {
 	return json;
 };
 
-ThreeD.Tools.addWndSizeStoring = function (aDialogId, aStorageId) {
+GLWorld.Tools.addWndSizeStoring = function (aDialogId, aStorageId) {
 	$("#" + aDialogId).on("dialogresizestop", function (event, ui) {
 		localStorage.setItem(aStorageId, JSON.stringify({width: ui.size.width, height: ui.size.height}));
 	});
 };
 
-ThreeD.Tools.addWndStoring = function (aDialogId, aStorageId) {
+GLWorld.Tools.addWndStoring = function (aDialogId, aStorageId) {
 	$("#" + aDialogId).on("dialogdragstop", function (event, ui) {
 		localStorage.setItem(aStorageId, JSON.stringify([ui.position.left, ui.position.top]));
 	});
 };
 
-ThreeD.Tools.hashToObj = function () {
+GLWorld.Tools.hashToObj = function () {
 	var initpObj = null;
 	var hash = window.location.hash;	
 	if (!hash){
@@ -282,17 +282,17 @@ ThreeD.Tools.hashToObj = function () {
 	return initpObj;	
 };
 
-ThreeD.Tools.displayObj = function (aObj, aParam) {
+GLWorld.Tools.displayObj = function (aObj, aParam) {
 	if (aObj) {
 		aObj.style.display = aParam;
 	}
 };
 
-ThreeD.Tools.displayObjById = function (aId, aParam) {
-	ThreeD.Tools.displayObj(document.getElementById(aId), aParam);
+GLWorld.Tools.displayObjById = function (aId, aParam) {
+	GLWorld.Tools.displayObj(document.getElementById(aId), aParam);
 };
 
-ThreeD.Tools.findRowInx = function (aXmlDoc, aRowName, aNodeName, aNodeValue/*, aLowCase*/) {	
+GLWorld.Tools.findRowInx = function (aXmlDoc, aRowName, aNodeName, aNodeValue/*, aLowCase*/) {	
 	var inx = -1;
 	if (aXmlDoc) {
 		var i = 0;
@@ -314,7 +314,7 @@ ThreeD.Tools.findRowInx = function (aXmlDoc, aRowName, aNodeName, aNodeValue/*, 
 	return inx;
 };
 
-ThreeD.Tools.getParamValue = function (aRow, aName) {
+GLWorld.Tools.getParamValue = function (aRow, aName) {
 	var value = null;		
 	
 	$("POI_PARAMS_ITEM", $("POI_PARAMS", aRow).eq(0)).each(function() {
@@ -329,7 +329,7 @@ ThreeD.Tools.getParamValue = function (aRow, aName) {
 	return value;
 };
 
-ThreeD.Tools.deg2rad = function (aDeg) {
+GLWorld.Tools.deg2rad = function (aDeg) {
 	var rad = 0;
 	if (aDeg) {
 		rad = Number(aDeg) * (Math.PI / 180);
@@ -337,7 +337,7 @@ ThreeD.Tools.deg2rad = function (aDeg) {
 	return rad;
 };
 
-ThreeD.Tools.isActiveInput = function () {
+GLWorld.Tools.isActiveInput = function () {
 	var active = false;
 	var activeTag = document.activeElement.nodeName.toLowerCase();
 	if ((activeTag === "input") || (activeTag === "select")) {
@@ -346,7 +346,7 @@ ThreeD.Tools.isActiveInput = function () {
 	return active;
 };
 
-ThreeD.Tools.setRayPosition = function (aParams) {
+GLWorld.Tools.setRayPosition = function (aParams) {
 	aParams.ray.ray.origin.x = aParams.position.x;
 	aParams.ray.ray.origin.y = aParams.position.y;
 	aParams.ray.ray.origin.z = aParams.position.z;
@@ -436,8 +436,8 @@ function ProjUnit () {
 }
 
 //STRINGS
-ThreeD.Tools.Strings = function () {
-	var url = ThreeD.Paths.path3d + "xml/strings.xml";
+GLWorld.Tools.Strings = function () {
+	var url = GLWorld.Paths.path3d + "xml/strings.xml";
 	var strings = null;
 	
 	function init () {
@@ -467,7 +467,7 @@ ThreeD.Tools.Strings = function () {
 };
 
 //LISTENER
-ThreeD.Listener = function () {
+GLWorld.Listener = function () {
 	var iArr = [];
 	
 	this.addListener = function (aCallback) {
@@ -480,4 +480,16 @@ ThreeD.Listener = function () {
 			iArr[i](aParams);
 		}
 	};
+};
+
+function isTouch(){
+	var touch = 0;
+	if (("ontouchstart"in window) || navigator.msMaxTouchPoints){
+		touch = 1;
+	}
+	return touch;
+}
+
+var Browser = {	
+	touch: isTouch()
 };

@@ -1,7 +1,6 @@
 window.GLWorld = window.GLWorld || {};
 
 GLWorld.World = function (aOpt) {
-	/*
 	var self = this;
 	var container = null;
 	this.camera = null;
@@ -11,7 +10,6 @@ GLWorld.World = function (aOpt) {
 	this.scene = null;
 	this.renderer = null;
 	
-	//var clock = new THREE.Clock();
 	this.controls = null;
 	var moveForward = false;
 	var moveBackward = false;
@@ -21,16 +19,17 @@ GLWorld.World = function (aOpt) {
 	var velocity = new THREE.Vector3();
 	var canJump = false;
 	
-	var iRays = {front: null, back: null, left: null, right: null, down: null, stepDown: 8};
+	var iRays = {/*front: null, back: null, left: null, right: null,*/ down: null, stepDown: 8};
 	
 	var iTerrain = null;
+	
 	this.player = {height: 2, minHgt: 2, maxHgt: 200, offsStep: 2};
 	var iSkybox = null;
-	*/
+	
 	this.sceneOptions = {size: {width: window.innerWidth, height: window.innerHeight}};
 	var iOptions = {useControls: true, allowControls: true, usePointerLock: false, cubeSize: {x: 5000, y: 5000, z: 5000}};
-	/*
 	this.attrs = {cont3d: {id: "container_3d"}, instruct: {contId: "instructions_cont", noPLId: "instructions_no_pl"}};
+	/*
 	this.sceneObjects = null;
 	
 	this.multiplayer = null;
@@ -72,7 +71,7 @@ GLWorld.World = function (aOpt) {
 	}
 
 	function initScene() {
-/*
+
 		window.addEventListener( 'resize', onWindowResize, false );
 
 		container = document.getElementById( self.attrs.cont3d.id );
@@ -80,8 +79,8 @@ GLWorld.World = function (aOpt) {
 		self.scene = new THREE.Scene();
 		//self.scene.fog = new THREE.Fog( 0xAAAAAA, 100, 1000 );
 		
-		self.sceneObjects = new THREE.Object3D();
-		self.scene.add( self.sceneObjects );
+		//self.sceneObjects = new THREE.Object3D();
+		//self.scene.add( self.sceneObjects );
 		
 		self.camera = new THREE.PerspectiveCamera( 45, self.sceneOptions.size.width / self.sceneOptions.size.height, 0.5, 6000 );
 	
@@ -90,7 +89,7 @@ GLWorld.World = function (aOpt) {
 		self.scene.add( new THREE.AmbientLight( 0xAAAAAA ) );
 
 		var light = new THREE.DirectionalLight( 0xFFFFFF, 0.9 );
-		light.castShadow = true;
+		//light.castShadow = true;
 		light.position.set( -1300, 700, 1240 );
 
 		self.scene.add( light );
@@ -110,52 +109,27 @@ GLWorld.World = function (aOpt) {
 		container.appendChild( self.renderer.domElement );
 				
 		initControls();
-		
-		self.mouse = new ThreeMice.Mouse({
-			renderer: self.renderer,
-			camera: self.camera,
-			scene: self.sceneObjects,
-			recursive: true,
-			controls: self.controls
-		});
-		
-		iVR = new ThreeD.VR({
+		/*
+		iVR = new GLWorld.VR({
 			world: self
 		});
-		
-		iObjects3D = new ThreeD.World.Objects3D({
-			world: self
-		});
-		
-		iSkybox = new ThreeD.Skybox ({
+		*/
+		iSkybox = new GLWorld.Skybox ({
 			size: iOptions.cubeSize,
 			scene: self.scene
 		});
-
-		iTerrain = new ThreeD.Terrain({
+		
+		iTerrain = new GLWorld.Terrain({
 			world: self
 		});
 		
-		if (iOptions.useMultiplayer) {
-			self.multiplayer = new ThreeD.Multiplayer({
-				world: self
-			});
-		}
-		
-		if (iOptions.useMap) {
-			self.map = new ThreeD.Map({
-				world: self
-			});
-		}
-		
+		/*
 		//if (Browser.touch) {
 			self.positioning = new ThreeD.Positioning({
 				world: self
 			});
 			self.positioning.createIcon();
 		//}
-			
-		iListeners = {};
 		*/
 	}
 	/*
@@ -201,20 +175,21 @@ GLWorld.World = function (aOpt) {
 			}
 		}
 	};
-	
+	*/
 	function initPointerLockControls () {
 		
 		var movecallback = null;
+		/*
 		if (iOptions.useMap) {
 			movecallback = self.cameraRotated;
 		}
-		
+		*/
 		self.controls = new THREE.PointerLockControls( self.camera, movecallback, Browser.touch );
 		
 		self.cameraCtrl = self.controls.getObject();
 		
 		self.scene.add( self.cameraCtrl );
-				
+		/*		
 		if (iOptions.usePointerLock) {	
 		
 			var instructions = document.getElementById( self.attrs.instruct.contId );
@@ -294,20 +269,21 @@ GLWorld.World = function (aOpt) {
 			}
 		}
 		else {
+		*/
 			self.controls.speed = 0.004;			
 			
 			var enableControls = function (evt) {
 				evt.preventDefault();
-				if (iOptions.allowControls) {
+				//if (iOptions.allowControls) {
 					self.controls.enabled = true;
-				}
+				//}
 				return false;
 			};
 			
 			var disableControls = function (evt) {
 				evt.preventDefault();
 				self.controls.enabled = false;
-				self.mouse.enabled = true;				
+				//self.mouse.enabled = true;				
 				self.controls.prevEvent = null;		
 				return false;
 			};
@@ -331,7 +307,7 @@ GLWorld.World = function (aOpt) {
 				$("#" + self.attrs.instruct.noPLId).fadeOut("slow");				
 			}, 5000);
 			
-		}
+		//}
 	}
 	
 	function initControls () {
@@ -414,15 +390,16 @@ GLWorld.World = function (aOpt) {
 	function initRaycasters () {
 		iRays.down = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, -1, 0 ), 0, self.player.height + iRays.stepDown );
 		
+		/*
 		var rayDist = 2;
 		
 		iRays.front = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3(), 0, rayDist );
 		iRays.back = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3(), 0, rayDist );
 		iRays.left = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3(), 0, rayDist );
 		iRays.right = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3(), 0, rayDist );
-		
+		*/
 	}
-	
+	/*
 	function changePlayerHeight (aOffs) {
 		if (iTerrain.onTerrain && !ThreeD.Tools.isActiveInput()) {			
 			var newHgt = self.player.height + aOffs;
@@ -432,7 +409,7 @@ GLWorld.World = function (aOpt) {
 			}
 		}
 	}	
-	
+	*/
 	function onWindowResize() {
 		var width = window.innerWidth;
 		var height = window.innerHeight;
@@ -440,21 +417,19 @@ GLWorld.World = function (aOpt) {
 		self.camera.aspect = width / height;
 		self.camera.updateProjectionMatrix();
 		
+		/*
 		if (iVR.vr.on) {
 			iVR.setSize( width, height );
 		}
 		else {
+		*/
 			self.renderer.setSize( width, height );
-		}
-		
-		if (self.mouse) {
-			self.mouse.resetSize(); 
-		}
-		
+		//}
+				
 		self.sceneOptions.size.width = width;
 		self.sceneOptions.size.height = height;
 	}
-	*/
+	
 	function animate() {
 
 		requestAnimationFrame( animate );
@@ -474,13 +449,12 @@ GLWorld.World = function (aOpt) {
 			iVR.render();
 		}
 		else {
-			self.renderer.render( self.scene, self.camera );
-		}
 		*/
-	}
+			self.renderer.render( self.scene, self.camera );
+		//}
+		
+	}	
 	
-	//var infoDiv = document.getElementById("info_div");
-	//var infoDiv2 = document.getElementById("info_div_2");
 	/*
 	this.intersectTerrain = function (aRay) {
 		var intersect = null;	
@@ -608,13 +582,9 @@ GLWorld.World = function (aOpt) {
 		//}
 	}
 	
-	//---PM---
-	
+	*/
+		
 	this.calcOffs = function (aX, aY) {
-		return calcOffs(aX, aY);
-	};
-	
-	function calcOffs (aX, aY) {
 		var xy = {x : '', y : ''};
 		if (aX !== '') {
 			xy.x = (Number(aX) - self.center.x) * self.center.mFac.x;
@@ -624,17 +594,13 @@ GLWorld.World = function (aOpt) {
 		}
 		return xy;
 	}
-		
-	this.calcCoords = function (aX, aY) {
-		return calcCoords(aX, aY);
-	};
 	
-	function calcCoords (aX, aY) {
+	this.calcCoords = function (aX, aY) {
 		var x = self.center.x + (Number(aX) / self.center.mFac.x);
 		var y = self.center.y - (Number(aY) / self.center.mFac.y);
 		return {x : x, y : y};
 	}
-	
+	/*
 	function setSrid (aSrid) {
 		if (aSrid !== null) {
 			aSrid = aSrid + "";
@@ -691,14 +657,14 @@ GLWorld.World = function (aOpt) {
 		iProjUnit.setCoords(aX, aY, aSrid);
 		return iProjUnit.getProjUnitXY();
 	}
-	
+	*/
 	this.setCameraPosition = function (aCoord) {
 		var offs = null;
 		if (aCoord.offs) {
 			offs = aCoord.offs;
 		}
 		else {
-			offs = calcOffs(aCoord.x, aCoord.y);
+			offs = self.calcOffs(aCoord.x, aCoord.y);
 		}
 				
 		var cX = offs.x;
@@ -718,7 +684,7 @@ GLWorld.World = function (aOpt) {
 			self.cameraCtrl.rotation.y = rY;
 		}
 	};
-	
+	/*
 	this.getAreaCoords = function () {
 		var coords = null;
 		if (iAreaXml) {
@@ -726,9 +692,9 @@ GLWorld.World = function (aOpt) {
 		}
 		return coords;
 	};
-	
+	*/
 	function initStartEnv () {
-		var path = "/lpilot/Playingmondo/3D/media/img/skybox/";
+		var path = "media/img/skybox/";
 		var urls = [path + "px.jpg", path + "nx.jpg",
 					path + "py.jpg", path + "ny.jpg",
 					path + "pz.jpg", path + "nz.jpg" ];
@@ -738,14 +704,14 @@ GLWorld.World = function (aOpt) {
 			initPlain: true
 		});		
 		//iTerrain.onTerrain = true;
-		
+				
 		self.setCameraPosition({
 			offs: {x: 0, y: 0},
 			elev: 0,
 			ry: 0
 		});
 	}
-	
+	/*
 	this.loadArea = function (aAreaId, aSrid) {		
 		
 		iAreaXml = null;
@@ -844,7 +810,7 @@ GLWorld.World = function (aOpt) {
 		initScene();
 		animate();
 		
-		//initStartEnv();
+		initStartEnv();
 	}
 	
 	init(aOpt);
@@ -856,14 +822,11 @@ GLWorld.Skybox = function (aOpt) {
 	
 	this.addSkybox = function (aUrls) {
 		removeSkybox();
-		
-		//var textureCube = THREE.ImageUtils.loadTextureCube( aUrls );/*r71*/
-		//textureCube.format = THREE.RGBFormat;
-		
-		var textureCube = new THREE.CubeTextureLoader( );/*r73*/
+			
+		var textureCube = new THREE.CubeTextureLoader( );
 
 		var shader = THREE.ShaderLib.cube;
-		shader.uniforms.tCube.value = textureCube.load( aUrls );//textureCube;/*r71*/
+		shader.uniforms.tCube.value = textureCube.load( aUrls );
 
 		var skyMaterial = new THREE.ShaderMaterial( {
 			fragmentShader: shader.fragmentShader,

@@ -1,11 +1,10 @@
 
-ThreeD.Terrain = function (aOpt) {
+GLWorld.Terrain = function (aOpt) {
 	var self = this;
 	var iWorld = null;
 	this.terrObj = null;
 	this.onTerrain = false;
 	
-	//var iTerrainArr = null;
 	var iKMSTerr = {DTM10: {sn: "DTM", cs: 10}, DSM8: {sn: "DSM", cs: 8}, DSM3p2: {sn: "DSM", cs: 3.2}};
 	var iSizes = {terr: {mercTerrGrid: 31, kmsCellSize: 10, kmsTerrGrid: 64}, map: {meters: 640, min: 420, initMapZoom: 17, kmsMax: 1320}, tiles: {min: 1, max: 5, def: 2}};	
 	var iTerrAttrs = {size: null, mapCoords: null, maxMercPx: 640, /*currInx : -1,*/ step : 5, range : 10, currType : null, mapId: null, b3dBox: null, extraTiles: 1, kmsShortName: null, areaCoords: null};
@@ -14,7 +13,7 @@ ThreeD.Terrain = function (aOpt) {
 	
 	function initOptions (aOpt) {
 		if (aOpt) {
-			if (!ThreeD.Tools.isUndefined(aOpt.world)) { 
+			if (aOpt.world) { 
 				iWorld = aOpt.world;
 			}
 		}
@@ -487,7 +486,7 @@ ThreeD.Terrain = function (aOpt) {
 	};
 	*/
 	function removeTerrain () {
-		ThreeD.Tools.removeChildren(self.terrObj);
+		GLWorld.Tools.removeChildren(self.terrObj);
 		
 		iTerrAttrs.currType = null;
 		iTerrAttrs.mapId = null;
