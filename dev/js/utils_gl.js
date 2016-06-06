@@ -243,6 +243,24 @@ GLWorld.Tools.setRayPosition = function (aParams) {
 	aParams.ray.ray.origin.z = aParams.position.z;
 };
 
+GLWorld.Tools.findInObjectArray = function(aArray, aMemberName, aVal) {
+	var inx = -1;
+	if (aArray) {
+		$.each(aArray, function(i, obj){
+			$.each(obj, function(name, value) {
+				if ((name === aMemberName)&&(String(value) === String(aVal))){
+					inx = i;
+					return false;
+				}
+			});
+			if (inx !== -1){
+				return false;
+			}
+		});
+	}
+	return inx;
+};
+
 function ProjUnit () {
 	var iProjUnitRelationToMeterX = 1;
 	var iProjUnitRelationToMeterY = 1;

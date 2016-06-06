@@ -5,9 +5,8 @@ GLWorld.Terrain = function (aOpt) {
 	this.terrObj = null;
 	this.onTerrain = false;
 	
-	var iKMSTerr = {DTM10: {sn: "DTM", cs: 10}, DSM8: {sn: "DSM", cs: 8}, DSM3p2: {sn: "DSM", cs: 3.2}};
-	var iSizes = {terr: {mercTerrGrid: 31, kmsCellSize: 10, kmsTerrGrid: 64}, map: {meters: 640, min: 420, initMapZoom: 17, kmsMax: 1320}, tiles: {min: 1, max: 5, def: 2}};	
-	var iTerrAttrs = {size: null, mapCoords: null, maxMercPx: 640, /*currInx : -1,*/ step : 5, range : 10, currType : null, mapId: null, b3dBox: null, extraTiles: 1, kmsShortName: null, areaCoords: null};
+	var iSizes = {terr: {mercTerrGrid: 31}, map: {meters: 640, min: 420, initMapZoom: 17}};	
+	var iTerrAttrs = {size: null, mapCoords: null, maxMercPx: 640, currType : null, mapId: null};
 	var iType = {terr: 0, map: 1};
 	var iMercZooms = [{id: 19, m_px: 0.2986}, {id: 18, m_px: 0.5972}, {id: 17, m_px: 1.1943}, {id: 16, m_px: 2.3887}, {id: 15, m_px: 4.7773}];
 	
@@ -32,19 +31,8 @@ GLWorld.Terrain = function (aOpt) {
 			if (aOpt.initPlain) {
 				initPlain();
 			}
-			/*
-			else if (aOpt.areaCoords) {
-				iTerrAttrs.areaCoords = aOpt.areaCoords;
-				
-				var kmsTerr = null;
-				if (iWorld.center.srid !== ThreeD.Coord.srid.merc) {
-					kmsTerr = iKMSTerr.DTM10;
-				}
-				createTerrain(iType.terr, kmsTerr);
-			}
-			*/
 			else if (aOpt.worldCenter) {
-				
+				createTerrain(iType.terr);
 			}
 		}
 	};
@@ -52,93 +40,33 @@ GLWorld.Terrain = function (aOpt) {
 	function formMapUrl (aType) {
 		var mapUrl = "";
 		
-		if (iWorld.center.srid === ThreeD.Coord.srid.merc) {
-			var mapType = "";		
-			if (aType === iType.terr) {
-				mapType = "satellite";
-			}
-			else {				
-				switch (iTerrAttrs.mapId) {
-					case "1210": mapType = "roadmap"; break;
-					case "1211": mapType = "satellite"; break;
-					default: mapType = "hybrid";
-				}				
-			}
-			
-			mapUrl = "http://maps.googleapis.com/maps/api/staticmap?scale=2&format=jpg-baseline&maptype=" + mapType + "&key=AIzaSyAk6N0fOjsoi-vgr2uHfNrWstewZyt4osM";
-			//mapUrl = "http://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/insert_center_coords/insert_zoom?format=jpeg&key=Asl2wCXHHyEj-S9fK8nHf7k08R9fbMoQga7q46gsEVnXs9kXlHdgCweSRz3FG1Zr";
+		var mapType = "";		
+		if (aType === iType.terr) {
+			mapType = "satellite";
 		}
-		else {		
-			var servicename = "";
-			var layers = "";		
-			if (aType === iType.terr) {
-				servicename = "orto_foraar";
-				layers = "orto_foraar";
-			}
-			else {
-				switch (iTerrAttrs.mapId) {
-					case "430": servicename = "orto_foraar"; layers = "orto_foraar"; break;
-					default: servicename = "topo_skaermkort"; layers = "dtk_skaermkort";
-				}
-			}
-			
-			var imgWdt = iSizes.map.kmsMax;
-			mapUrl = 'http://kortforsyningen.kms.dk/service?login=euman&password=psalewc23&servicename=' + servicename + '&service=WMS&version=1.1.1&request=GetMap&styles=&exceptions=application/vnd.ogc.se_inimage&layers=' + layers + '&format=image/jpeg&width=' + imgWdt + '&height=' + imgWdt + '&SRS=EPSG:25832';
+		else {				
+			switch (iTerrAttrs.mapId) {
+				case "1210": mapType = "roadmap"; break;
+				case "1211": mapType = "satellite"; break;
+				default: mapType = "hybrid";
+			}				
 		}
+		
+		mapUrl = "http://maps.googleapis.com/maps/api/staticmap?scale=2&format=jpg-baseline&maptype=" + mapType + "&key=AIzaSyDZubUD2PGl9Qz_KMI94In9AQf8H7BTvuA";
+		//mapUrl = "http://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/insert_center_coords/insert_zoom?format=jpeg&key=Asl2wCXHHyEj-S9fK8nHf7k08R9fbMoQga7q46gsEVnXs9kXlHdgCweSRz3FG1Zr";
 				
 		return mapUrl;
 	}
-	/*
-	this.calcAreaWidthFromTerr = function (aX, aY, aSrid, aCnt) {
-		return calcAreaWidthFromTerr(aX, aY, aSrid, aCnt);
-	};
 	
-	function calcAreaWidthFromTerr (aX, aY, aSrid, aCnt) {		
-		var cnt = aCnt;
-		if (!cnt) {
-			cnt = iSizes.tiles.def;
-		}
-		var mFac = getMFac(aX, aY, aSrid);
-		var meters = findTileMetersInPlace(aX, aY, aSrid, mFac) * cnt;
+	function calcXYSizeInCoords (aXSize, aYSize, aMFac) {
+		var xSize = Math.round(aXSize / aMFac.x);
+		var	ySize = Math.round(aYSize / aMFac.y);
 		
-		return calcXYSizeInCoords(meters, meters, aSrid, mFac);
-	}
-	*/
-	function calcXYSizeInCoords (aXSize, aYSize, aSrid, aMFac) {
-		var xSize = aXSize;
-		var ySize = aYSize;
-		if (aSrid === ThreeD.Coord.srid.merc) {			
-			xSize = Math.round(xSize / aMFac.x);
-			ySize = Math.round(ySize / aMFac.y);
-		}
 		return {xSize : xSize, ySize : ySize};	
 	}
-	
-	function calcXYSizeInMeters (aXSize, aYSize, aSrid, aMFac) {
-		var xSize = aXSize;
-		var ySize = aYSize;
-		if (aSrid === ThreeD.Coord.srid.merc) {			
-			xSize = Math.round(xSize * aMFac.x);
-			ySize = Math.round(ySize * aMFac.y);
-		}		
-		return {xSize : xSize, ySize : ySize};	
-	}
-	
-	function findTileMetersInPlace (aX, aY, aSrid, aMFac) {
-		var meters = 0;
-				
-		if (ThreeD.Coord.findSRID(aX, aY, aSrid) === ThreeD.Coord.srid.merc) {
-			meters = calcMercTileValues(aMFac, null).meters;					
-		}
-		else {
-			meters = iSizes.terr.kmsCellSize * iSizes.terr.kmsTerrGrid;					
-		}
 			
-		return meters;
-	}
-	
-	function calcMercTileValues (aMFac, aMinMeters) {
-		var zi = iArrayTools.findInObjectArray(iMercZooms, "id", iSizes.map.initMapZoom);
+	function calcMercTileValues (aMFac) {
+		var zi = GLWorld.Tools.findInObjectArray(iMercZooms, "id", iSizes.map.initMapZoom);
 		var zoom = iMercZooms[zi].id;
 		var m_px = iMercZooms[zi].m_px;
 		
@@ -151,9 +79,6 @@ GLWorld.Terrain = function (aOpt) {
 		var meters = Math.min(metersX, metersY);
 		
 		var minMeters = iSizes.map.min;
-		if (aMinMeters) {
-			minMeters = aMinMeters;
-		}
 		
 		if (meters >= minMeters) {
 			var pxXYM = calcMercPxXY(meters, m_px, aMFac);
@@ -190,48 +115,8 @@ GLWorld.Terrain = function (aOpt) {
 		var px_y = Math.round(aMeters / (aMPx * aMFac.y));
 		return {px_x: px_x, px_y: px_y};
 	}
-	/*
-	this.calcTilesFromCoords = function (aCoords, aSrid, aMeters, aMFac) {
-		return calcTilesFromCoords(aCoords, aSrid, aMeters, aMFac);
-	};
-	*/
-	function calcTilesFromCoords (aCoords, aSrid, aMeters, aMFac) {
-		var cnt = iSizes.tiles.def;
-		if (aCoords) {
-			var minMax = ThreeD.Coord.findMinMax(aCoords);
-						
-			var sizeCX = minMax.maxX - minMax.minX;
-			var sizeCY = minMax.maxY - minMax.minY;
-			
-			var mFac = aMFac;
-			var tileMeters = aMeters;
-						
-			if (!mFac || !tileMeters) {
-				var cx = Math.round((minMax.minX + minMax.maxX) / 2);
-				var cy = Math.round((minMax.minY + minMax.maxY) / 2);
-			
-				mFac = getMFac(cx, cy, aSrid);
-				tileMeters = findTileMetersInPlace(cx, cy, aSrid, mFac);
-			}
-			
-			var sizeMXY = calcXYSizeInMeters(sizeCX, sizeCY, aSrid, mFac);			
-			
-			var sizeM = Math.max(sizeMXY.xSize, sizeMXY.ySize);
-			
-			cnt = Math.round(sizeM / tileMeters);
-			
-			if (cnt < iSizes.tiles.min) {
-				cnt = iSizes.tiles.min;
-			}
-			else if (cnt > iSizes.tiles.max) {
-				cnt = iSizes.tiles.max;
-			}
-		}
-		return cnt;
-	}
 	
-	function createTerrain (aType, aKMSTerr) {
-		//if (!iTerrainArr) {
+	function createTerrain (aType) {
 		if (self.terrObj.children.length === 0) {
 			var myXY = iWorld.calcCoords(iWorld.cameraCtrl.position.x, iWorld.cameraCtrl.position.z);
 						
@@ -239,63 +124,25 @@ GLWorld.Terrain = function (aOpt) {
 			
 			if ((xy.x !== null) && (xy.y !== null)) {
 				iTerrAttrs.currType = aType;
-								
-				var size = {unity: 0, coords: 0, merc: null};
 				
-				if (iWorld.center.srid === ThreeD.Coord.srid.merc) {
-					var mercVals = calcMercTileValues(iWorld.center.mFac, null);
-					size.merc = mercVals;
-					size.unity = mercVals.meters;
-					size.meters = mercVals.meters;
-				}
-				else {
-					if (aType === iType.terr) {
-						iTerrAttrs.kmsShortName = aKMSTerr.sn;						
-						iSizes.terr.kmsCellSize = aKMSTerr.cs;
-						var kmsMeters = iSizes.terr.kmsCellSize * iSizes.terr.kmsTerrGrid;
-						
-						//1 unit = 1 meter
-						size.unity = kmsMeters;
-						size.meters = kmsMeters;
-					}
-					else {
-						//1 unit = 1 meter
-						size.unity = iSizes.map.meters;
-						size.meters = iSizes.map.meters;
-					}
-				} 				
+				var size = {glworld: 0, coords: 0, merc: null};
+				
+				var mercVals = calcMercTileValues(iWorld.center.mFac, null);
+				size.merc = mercVals;
+				size.glworld = mercVals.meters;
+				size.meters = mercVals.meters;
 				
 				iTerrAttrs.size = size;
 				
-				//iTerrainArr = [];
-								
-				var cnt = calcTilesFromCoords(iTerrAttrs.areaCoords, iWorld.center.srid, iTerrAttrs.size.meters, iWorld.center.mFac);
-												
-				cnt += iTerrAttrs.extraTiles;
-								
-				iTerrAttrs.mapCoords = calcXYSizeInCoords(iTerrAttrs.size.meters, iTerrAttrs.size.meters, iWorld.center.srid, iWorld.center.mFac);				
+				var cnt = 3;
+				
+				iTerrAttrs.mapCoords = calcXYSizeInCoords(iTerrAttrs.size.meters, iTerrAttrs.size.meters, iWorld.center.mFac);
 				
 				var segm = 1;
-				var offsetStep = {unity: 0, coord: {x: 0, y: 0}};
 				if (aType === iType.terr) {
-					if (iWorld.center.srid !== ThreeD.Coord.srid.merc) {
-						segm = iSizes.terr.kmsTerrGrid;
-						/*
-						offsetStep.unity = iSizes.terr.kmsCellSize;
-						offsetStep.coord.x = iSizes.terr.kmsCellSize;
-						offsetStep.coord.y = iSizes.terr.kmsCellSize;
-						*/
-					}
-					else {
-						segm = iSizes.terr.mercTerrGrid;
-						/*
-						offsetStep.unity = iTerrAttrs.size.unity / segm;
-						offsetStep.coord.x = iTerrAttrs.mapCoords.xSize / segm;
-						offsetStep.coord.y = iTerrAttrs.mapCoords.ySize / segm;	
-						*/						
-					}
+					segm = iSizes.terr.mercTerrGrid;
 				}
-												
+				
 				var i = 0;
 				var j = 0;
 				
@@ -306,35 +153,13 @@ GLWorld.Terrain = function (aOpt) {
 					coordOffsetFromPosY += iTerrAttrs.mapCoords.ySize / 2;
 				}
 								
-				var coordXStart = 0;
-				var coordY = 0;
-				
-				if ((aType === iType.terr) && (iWorld.center.srid !== ThreeD.Coord.srid.merc)) {
-					coordXStart = Math.floor((xy.x - coordOffsetFromPosX) / iSizes.terr.kmsCellSize) * iSizes.terr.kmsCellSize;
-					coordY = Math.floor((xy.y - coordOffsetFromPosY) / iSizes.terr.kmsCellSize) * iSizes.terr.kmsCellSize;
-				}
-				else {
-					coordXStart = xy.x - coordOffsetFromPosX;
-					coordY = xy.y - coordOffsetFromPosY;
-				}				
+				var coordXStart = xy.x - coordOffsetFromPosX;
+				var coordY = xy.y - coordOffsetFromPosY;			
 							
 				var offs = iWorld.calcOffs(coordXStart, coordY);
 				var xStart = offs.x;
 				var y = offs.y;
-				/*				
-				var edge = iTerrAttrs.range;
-				if (iTerrAttrs.extraTiles > 0) {					
-					edge = (iTerrAttrs.extraTiles / 2) * iTerrAttrs.size.unity;
-				}
-				
-				var bLX = xStart + edge;
-				var bBY = y + edge;
-				var bRX = ((xStart + (iTerrAttrs.size.unity * cnt)) - ((cnt - 1) * offsetStep.unity)) - edge;
-				var bTY = ((y + (iTerrAttrs.size.unity * cnt)) - ((cnt - 1) * offsetStep.unity)) - edge;				
-				
-				iTerrAttrs.b3dBox = {lX: bLX, bY: bBY, rX: bRX, tY: bTY};	
-				*/			
-				
+								
 				for (j = 0; j < cnt; j++) {
 					var x = xStart;
 					var coordX = coordXStart;
@@ -342,19 +167,19 @@ GLWorld.Terrain = function (aOpt) {
 						
 						var placeCamera = false;
 						if ((myXY.x >= coordX) && (myXY.x <= (coordX + iTerrAttrs.mapCoords.xSize)) && (myXY.y >= coordY) && (myXY.y <= (coordY + iTerrAttrs.mapCoords.ySize))) {
-							//iTerrAttrs.currInx = iTerrainArr.length;
 							placeCamera = true;
 						}
+						
 						createTerrainTile(aType, 
 										{x: coordX, y: coordY, xSize: iTerrAttrs.mapCoords.xSize, ySize: iTerrAttrs.mapCoords.ySize}, 
-										{x: x, y: y, xSize: iTerrAttrs.size.unity, ySize: iTerrAttrs.size.unity, elev: 0}, 
-										{placeCamera: placeCamera, /*addToArr: true,*/ img: null, id: null, segm: segm});
+										{x: x, y: y, xSize: iTerrAttrs.size.glworld, ySize: iTerrAttrs.size.glworld}, 
+										{placeCamera: placeCamera, img: null, id: null, segm: segm});
 						
-						x = x + iTerrAttrs.size.unity - offsetStep.unity;
-						coordX = coordX + iTerrAttrs.mapCoords.xSize - offsetStep.coord.x;
+						x = x + iTerrAttrs.size.glworld;
+						coordX = coordX + iTerrAttrs.mapCoords.xSize;
 					}				
-					y = y - iTerrAttrs.size.unity + offsetStep.unity;
-					coordY = coordY + iTerrAttrs.mapCoords.ySize - offsetStep.coord.y;
+					y = y - iTerrAttrs.size.glworld;
+					coordY = coordY + iTerrAttrs.mapCoords.ySize;
 				}
 			}
 		}
@@ -373,29 +198,21 @@ GLWorld.Terrain = function (aOpt) {
 		else {
 			id = 'terr|' + lX + '|' + bY;
 		}
-		/*
-		if (aOpt.addToArr) {
-			iTerrainArr.push({id : id});
-		}
-		*/
-		var trUrl = "";//formHost();
-		if (aType === iType.map) {
-			trUrl += i3DPath + "map_80.asc";
-		}
-		else {
-			trUrl += "/lifepilotjs/Terrain?action=getTerrain";
-			if (iWorld.center.srid !== ThreeD.Coord.srid.merc) {
-				trUrl += "&startx=" + (Math.round((lX/* + iSizes.terr.kmsCellSize*/) * 10) / 10) + "&starty=" + (Math.round(tY * 10) / 10) + "&lengthx=" + (aCoords.xSize + iSizes.terr.kmsCellSize) + "&lengthy=" + (aCoords.ySize + iSizes.terr.kmsCellSize) + "&shortName=" + iTerrAttrs.kmsShortName + "&cellSize=" + iSizes.terr.kmsCellSize;
-			}
-			else {
-				var grid = iSizes.terr.mercTerrGrid + 1;			
-				//var cellSizeX = aCoords.xSize / grid;
-				//var cellSizeY = aCoords.ySize / grid;
+		
+		//http://dev.virtualearth.net/REST/v1/Elevation/Bounds?output=json&key=Asl2wCXHHyEj-S9fK8nHf7k08R9fbMoQga7q46gsEVnXs9kXlHdgCweSRz3FG1Zr&bounds=37.790495483,-122.489371833,37.795918917,-122.482535653&rows=32&cols=32
+		
+		var trUrl = "";
+		if (aType === iType.terr) {
+			
+			trUrl += "http://dev.virtualearth.net/REST/v1/Elevation/Bounds?output=json&key=Asl2wCXHHyEj-S9fK8nHf7k08R9fbMoQga7q46gsEVnXs9kXlHdgCweSRz3FG1Zr";
+			
+			var grid = iSizes.terr.mercTerrGrid + 1;
+			
+			var lb = GLWorld.Coord.mercToWGS84({x: lX, y: bY});
+			var rt = GLWorld.Coord.mercToWGS84({x: rX, y: tY});
 								
-				trUrl += "&srs=" + ThreeD.Coord.epsg.merc + "&bbox=" + (lX/* + cellSizeX*/) + "%2c" + (bY/* + cellSizeY*/) + "%2c" + rX + "%2c" + tY + "&rows=" + grid + "&cols=" + grid;
-			}
-			trUrl += "&output=json";
-		}
+			trUrl += "&bounds=" + lb.y + "," + lb.x + "," + rt.y + "," + rt.x + "&rows=" + grid + "&cols=" + grid;
+		}		
 		
 		var img = aOpt.img;
 		if (!img) {
@@ -403,20 +220,13 @@ GLWorld.Terrain = function (aOpt) {
 		}
 				
 		var trParams = {id: id, trUrl: trUrl, imgUrl: img, units: aUnits, type: aType, placeCamera: aOpt.placeCamera, segm: aOpt.segm};
-				
-		if (iWorld.center.srid !== ThreeD.Coord.srid.merc) {			
-			if (!aOpt.img) {
-				trParams.imgUrl += '&BBOX=' + lX + '%2c' + bY + '%2c' + rX + '%2c' + tY;
-			}
-			addTerrain(trParams);
+			
+		if (!aOpt.img) {
+			var wgs = GLWorld.Coord.mercToWGS84({x: (lX + rX) / 2, y: (bY + tY) / 2});
+			trParams.imgUrl = addMercUrlParams(wgs.y, wgs.x, iTerrAttrs.size.merc, trParams.imgUrl);
 		}
-		else {
-			if (!aOpt.img) {
-				var wgs = ThreeD.Coord.mercToWGS84({x: (lX + rX) / 2, y: (bY + tY) / 2});
-				trParams.imgUrl = addMercUrlParams(wgs.y, wgs.x, iTerrAttrs.size.merc, trParams.imgUrl);
-			}
-			addTerrain(trParams);
-		}		
+				
+		addTerrain(trParams);		
 	}
 	
 	function addMercUrlParams (lat, lon, merc, aUrl) {
@@ -435,24 +245,17 @@ GLWorld.Terrain = function (aOpt) {
 	
 	function addTerrain (aTrParams) {
 		var tr = aTrParams;
-		//if (tr.placeCamera) {
+				
 		$.getJSON( tr.trUrl, function( json ) {
 						
 			var geometry = new THREE.PlaneBufferGeometry( tr.units.xSize, tr.units.ySize, tr.segm, tr.segm );
 			
-			var elevations = json.elevations;
+			var elevations = json.resourceSets[0].resources[0].elevations;
+			
+			//console.log(elevations);
+			//console.log(tr.imgUrl);
+			
 			/*
-			var newEl = [];
-			for (j = 0; j < 32 * 32; j++) {
-				if (j % 32 == 0) {
-					newEl.push(0);
-				}
-				newEl.push(elevations[j]);
-			}
-			for (j = 0; j < 33; j++) {
-				newEl.push(0);
-			}
-			*/
 			var vertices = geometry.attributes.position.array;
 			var i = 0, lng = vertices.length;
 			var tInx = 0;
@@ -463,11 +266,9 @@ GLWorld.Terrain = function (aOpt) {
 			}			
 			
 			var material = new THREE.MeshLambertMaterial({ shading: THREE.SmoothShading });
-			//THREE.ImageUtils.crossOrigin = "";/*r71*/
-			//var grTx = THREE.ImageUtils.loadTexture( tr.imgUrl );/*r71*/
-			var txLoader = new THREE.TextureLoader();/*r73*/
+			var txLoader = new THREE.TextureLoader();
 			txLoader.setCrossOrigin(true);
-			material.map = txLoader.load(tr.imgUrl);//grTx;/*r71*/
+			material.map = txLoader.load(tr.imgUrl);
 			
 			var terrTile = new THREE.Mesh( geometry, material);
 			terrTile.receiveShadow = true;
@@ -477,19 +278,14 @@ GLWorld.Terrain = function (aOpt) {
 			terrTile.position.z = tr.units.y - (tr.units.ySize / 2);
 			
 			self.terrObj.add( terrTile );
+			*/
 			
 			if (tr.placeCamera) {
 				self.onTerrain = true;
 			}
 		});
-		//}
 	}
 	
-	/*
-	this.removeTerrain = function () {
-		removeTerrain();
-	};
-	*/
 	function removeTerrain () {
 		GLWorld.Tools.removeChildren(self.terrObj);
 		
@@ -576,41 +372,7 @@ GLWorld.Terrain = function (aOpt) {
 		//iWorld.scene.add( plainTile );
 		
 	};
-	
-	function addEdgeFence (aOpt) {
-		var hgt = 20;		
-		var txSRep = (aOpt.size / 512) * 10, txTRep = 0.95;
-		var eGeo = new THREE.PlaneBufferGeometry(aOpt.size, hgt);
-		
-		var trTexture = THREE.ImageUtils.loadTexture( 'media/img/trees1.png' );
-		trTexture.wrapS = trTexture.wrapT = THREE.RepeatWrapping; 
-		trTexture.repeat.set( txSRep, txTRep );
-		var eMat = new THREE.MeshPhongMaterial( { map: trTexture, transparent: true } );
-		
-		var halfSize = aOpt.size / 2;
-		var e1 = new THREE.Mesh(eGeo, eMat);
-		e1.position.x = halfSize;
-		e1.position.y = hgt / 2;
-		e1.rotation.y = -Math.PI / 2;
-		iWorld.sceneObjects.add( e1 );
-		
-		var e2 = new THREE.Mesh(eGeo, eMat);
-		e2.position.z = halfSize;
-		e2.position.y = hgt / 2;
-		e2.rotation.y = -Math.PI;
-		iWorld.sceneObjects.add( e2 );
-		
-		var e3 = new THREE.Mesh(eGeo, eMat);
-		e3.position.x = -halfSize;
-		e3.position.y = hgt / 2;
-		e3.rotation.y = Math.PI / 2;
-		iWorld.sceneObjects.add( e3 );
-		
-		var e4 = new THREE.Mesh(eGeo, eMat);
-		e4.position.z = -halfSize;
-		e4.position.y = hgt / 2;
-		iWorld.sceneObjects.add( e4 );		
-	}
+
 	*/
 	
 	function init (aOpt) {

@@ -625,8 +625,6 @@ GLWorld.World = function (aOpt) {
 		var mFacXY = getMFac(self.center.x, self.center.y, null);
 		self.center.mFac.x = mFacXY.x;
 		self.center.mFac.y = mFacXY.y;
-				
-		console.log(self.center);
 	}
 	
 	function getMFac (aX, aY, aSrid) {
@@ -679,11 +677,12 @@ GLWorld.World = function (aOpt) {
 					path + "pz.jpg", path + "nz.jpg" ];
 		iSkybox.addSkybox(urls);
 		
+		/*
 		iTerrain.setTerrain({
 			initPlain: true
 		});		
 		//iTerrain.onTerrain = true;
-		
+		*/
 		setCenter({
 			lat: 37.811158,
 			lon: -122.477316
@@ -691,8 +690,12 @@ GLWorld.World = function (aOpt) {
 				
 		self.setCameraPosition({
 			offs: {x: 0, y: 0},
-			elev: 0,
+			elev: 50,
 			ry: 0
+		});
+		
+		iTerrain.setTerrain({
+			worldCenter: true
 		});
 	}
 	/*
