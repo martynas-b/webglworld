@@ -250,12 +250,22 @@ GLWorld.Terrain = function (aOpt) {
 						
 			var geometry = new THREE.PlaneBufferGeometry( tr.units.xSize, tr.units.ySize, tr.segm, tr.segm );
 			
-			var elevations = json.resourceSets[0].resources[0].elevations;
+			var bingElevations = json.resourceSets[0].resources[0].elevations;
 			
 			//console.log(elevations);
 			//console.log(tr.imgUrl);
 			
-			/*
+			var elevations = [];
+			var cells = 32, t1 = cells;
+			for (t1 = cells; t1 > 0; t1--) {
+				var tBase = ((t1 - 1) * cells);
+				var t2 = 0;
+				for (t2 = 0; t2 < cells; t2++) {
+					var inx =  tBase + t2; 
+					elevations.push(bingElevations[inx]);
+				}
+			}			
+			
 			var vertices = geometry.attributes.position.array;
 			var i = 0, lng = vertices.length;
 			var tInx = 0;
@@ -271,15 +281,14 @@ GLWorld.Terrain = function (aOpt) {
 			material.map = txLoader.load(tr.imgUrl);
 			
 			var terrTile = new THREE.Mesh( geometry, material);
-			terrTile.receiveShadow = true;
+			//terrTile.receiveShadow = true;
 			terrTile.rotation.x = -Math.PI / 2;
 			
 			terrTile.position.x = tr.units.x + (tr.units.xSize / 2);
 			terrTile.position.z = tr.units.y - (tr.units.ySize / 2);
 			
 			self.terrObj.add( terrTile );
-			*/
-			
+						
 			if (tr.placeCamera) {
 				self.onTerrain = true;
 			}

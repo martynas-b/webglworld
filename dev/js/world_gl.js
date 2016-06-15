@@ -401,9 +401,9 @@ GLWorld.World = function (aOpt) {
 		iRays.right = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3(), 0, rayDist );
 		*/
 	}
-	/*
+	
 	function changePlayerHeight (aOffs) {
-		if (iTerrain.onTerrain && !ThreeD.Tools.isActiveInput()) {			
+		if (iTerrain.onTerrain/* && !ThreeD.Tools.isActiveInput()*/) {			
 			var newHgt = self.player.height + aOffs;
 			if ((newHgt >= self.player.minHgt) && (newHgt <= self.player.maxHgt)) {				
 				self.player.height = newHgt;				
@@ -411,7 +411,7 @@ GLWorld.World = function (aOpt) {
 			}
 		}
 	}	
-	*/
+	
 	function onWindowResize() {
 		var width = window.innerWidth;
 		var height = window.innerHeight;
@@ -441,9 +441,9 @@ GLWorld.World = function (aOpt) {
 	}
 
 	function render() {
-		/*
-		updateControls();
 		
+		updateControls();
+		/*
 		//THREE.AnimationHandler.update( clock.getDelta() );
 		
 		if (iVR.vr.on) {
@@ -478,7 +478,7 @@ GLWorld.World = function (aOpt) {
 		aRay.ray.origin.copy( aPosVec );
 		aRay.ray.direction.set( aDirVals.x, aDirVals.y, aDirVals.z );
 	}
-		
+	*/
 	function updateControls () {
 		
 		//if (self.controls) {
@@ -500,33 +500,33 @@ GLWorld.World = function (aOpt) {
 			var moved = false;
 	
 			if ( moveForward ) {				
-				setRayPosAndDir(iRays.front, cObj.position, {x: -Math.sin(cObj.rotation.y), y: 0, z: -Math.cos(cObj.rotation.y)});
-				if (intersectSceneObjects(iRays.front).length === 0) {
+				//setRayPosAndDir(iRays.front, cObj.position, {x: -Math.sin(cObj.rotation.y), y: 0, z: -Math.cos(cObj.rotation.y)});
+				//if (intersectSceneObjects(iRays.front).length === 0) {
 					velocity.z -= xzSpeed * delta;
 					moved = true;
-				}
+				//}
 			}
 			if ( moveBackward ) {
-				setRayPosAndDir(iRays.back, cObj.position, {x: Math.sin(cObj.rotation.y), y: 0, z: Math.cos(cObj.rotation.y)});
-				if (intersectSceneObjects(iRays.back).length === 0) {
+				//setRayPosAndDir(iRays.back, cObj.position, {x: Math.sin(cObj.rotation.y), y: 0, z: Math.cos(cObj.rotation.y)});
+				//if (intersectSceneObjects(iRays.back).length === 0) {
 					velocity.z += xzSpeed * delta;
 					moved = true;
-				}
+				//}
 			}
 	
 			if ( moveLeft ) {
-				setRayPosAndDir(iRays.left, cObj.position, {x: Math.cos(cObj.rotation.y), y: 0, z: Math.sin(cObj.rotation.y)});
-				if (intersectSceneObjects(iRays.left).length === 0) {
+				//setRayPosAndDir(iRays.left, cObj.position, {x: Math.cos(cObj.rotation.y), y: 0, z: Math.sin(cObj.rotation.y)});
+				//if (intersectSceneObjects(iRays.left).length === 0) {
 					velocity.x -= xzSpeed * delta;
 					moved = true;
-				}
+				//}
 			}
 			if ( moveRight ) {
-				setRayPosAndDir(iRays.right, cObj.position, {x: -Math.cos(cObj.rotation.y), y: 0, z: -Math.sin(cObj.rotation.y)});
-				if (intersectSceneObjects(iRays.right).length === 0) {
+				//setRayPosAndDir(iRays.right, cObj.position, {x: -Math.cos(cObj.rotation.y), y: 0, z: -Math.sin(cObj.rotation.y)});
+				//if (intersectSceneObjects(iRays.right).length === 0) {
 					velocity.x += xzSpeed * delta;
 					moved = true;
-				}
+				//}
 			}
 			
 			
@@ -535,14 +535,15 @@ GLWorld.World = function (aOpt) {
 				cObj.translateX( velocity.x * delta );
 				
 				cObj.translateZ( velocity.z * delta );
-				
+				/*
 				if (iListeners.onmove) {
 					iListeners.onmove.notifyListeners();			
 				}
 				
 				if (self.map) {
 					self.map.hs.onPlayerMove(iUserSettings.personId, cObj.position.x, cObj.position.z);
-				}				
+				}	
+				*/		
 			}
 				
 			if (iTerrain.onTerrain) {
@@ -575,17 +576,10 @@ GLWorld.World = function (aOpt) {
 				}
 			}
 			
-			//console.log(delta);
-			
-			//infoDiv2.innerHTML = cObj.position.x + "</br>" + cObj.position.y + "</br>" + cObj.position.z;
-
-			
 			prevTime = time;
 		//}
 	}
-	
-	*/
-		
+			
 	this.calcOffs = function (aX, aY) {
 		var xy = {x : '', y : ''};
 		if (aX !== '') {
@@ -661,15 +655,7 @@ GLWorld.World = function (aOpt) {
 			self.cameraCtrl.rotation.y = rY;
 		}
 	};
-	/*
-	this.getAreaCoords = function () {
-		var coords = null;
-		if (iAreaXml) {
-			coords = iXmlTools.getChildNodeValue(iAreaXml.getElementsByTagName("AREA3D_ITEM").item(0), "COORD");
-		}
-		return coords;
-	};
-	*/
+	
 	function initStartEnv () {
 		var path = "media/img/skybox/";
 		var urls = [path + "px.jpg", path + "nx.jpg",
@@ -690,7 +676,7 @@ GLWorld.World = function (aOpt) {
 				
 		self.setCameraPosition({
 			offs: {x: 0, y: 0},
-			elev: 50,
+			elev: -5,
 			ry: 0
 		});
 		
