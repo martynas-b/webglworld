@@ -27,7 +27,7 @@ GLWorld.World = function (aOpt) {
 	var iSkybox = null;
 	
 	this.sceneOptions = {size: {width: window.innerWidth, height: window.innerHeight}};
-	var iOptions = {useControls: true, allowControls: true, usePointerLock: false, cubeSize: {x: 5000, y: 5000, z: 5000}};
+	var iOptions = {useControls: true, allowControls: true, /*usePointerLock: false,*/ cubeSize: {x: 5000, y: 5000, z: 5000}};
 	this.attrs = {cont3d: {id: "container_3d"}, instruct: {contId: "instructions_cont", noPLId: "instructions_no_pl"}};
 	/*
 	this.sceneObjects = null;
@@ -40,9 +40,9 @@ GLWorld.World = function (aOpt) {
 	var iProjUnit = null;
 	this.center = {lat : 0, lon : 0, x: 0, y: 0, mFac : {x : 1, y : 1}};
 	//this.center = {x : 0, y : 0, mFac : {x : 1, y : 1}, mXY : {x : null, y : null}};
-	/*
-	var iVR = null;
 	
+	var iVR = null;
+	/*
 	this.map = null;
 	
 	var iObjects3D = null;
@@ -111,11 +111,11 @@ GLWorld.World = function (aOpt) {
 		container.appendChild( self.renderer.domElement );
 				
 		initControls();
-		/*
+		
 		iVR = new GLWorld.VR({
 			world: self
 		});
-		*/
+		
 		iSkybox = new GLWorld.Skybox ({
 			size: iOptions.cubeSize,
 			scene: self.scene
@@ -160,9 +160,10 @@ GLWorld.World = function (aOpt) {
 			self.map.setMapVisibility(!aOn);			
 		}
 	};
-	
+	*/
 	this.setAllowControls = function (aAllow) {
 		if (iOptions.useControls) {
+			/*
 			if (iOptions.usePointerLock) {
 				var instructions = document.getElementById( self.attrs.instruct.contId );
 				if (aAllow) {				
@@ -173,11 +174,12 @@ GLWorld.World = function (aOpt) {
 				}
 			}
 			else {
+			*/
 				iOptions.allowControls = aAllow;
-			}
+			//}
 		}
 	};
-	*/
+	
 	function initPointerLockControls () {
 		
 		var movecallback = null;
@@ -276,9 +278,9 @@ GLWorld.World = function (aOpt) {
 			
 			var enableControls = function (evt) {
 				evt.preventDefault();
-				//if (iOptions.allowControls) {
+				if (iOptions.allowControls) {
 					self.controls.enabled = true;
-				//}
+				}
 				return false;
 			};
 			
@@ -419,14 +421,12 @@ GLWorld.World = function (aOpt) {
 		self.camera.aspect = width / height;
 		self.camera.updateProjectionMatrix();
 		
-		/*
 		if (iVR.vr.on) {
 			iVR.setSize( width, height );
 		}
 		else {
-		*/
 			self.renderer.setSize( width, height );
-		//}
+		}
 				
 		self.sceneOptions.size.width = width;
 		self.sceneOptions.size.height = height;
@@ -443,7 +443,7 @@ GLWorld.World = function (aOpt) {
 	function render() {
 		
 		updateControls();
-		/*
+		
 		//THREE.AnimationHandler.update( clock.getDelta() );
 		
 		if (iVR.vr.on) {
@@ -451,10 +451,8 @@ GLWorld.World = function (aOpt) {
 			iVR.render();
 		}
 		else {
-		*/
 			self.renderer.render( self.scene, self.camera );
-		//}
-		
+		}
 	}	
 	
 	/*
@@ -663,15 +661,25 @@ GLWorld.World = function (aOpt) {
 					path + "pz.jpg", path + "nz.jpg" ];
 		iSkybox.addSkybox(urls);
 		
-		/*
+		
 		iTerrain.setTerrain({
 			initPlain: true
 		});		
 		//iTerrain.onTerrain = true;
-		*/
+		
+	}
+	
+	this.goToLocation = function (aOpt) {
+		
+		canJump = false;
+		
 		setCenter({
+			/*
 			lat: 37.811158,
 			lon: -122.477316
+			*/
+			lat: aOpt.position.lat,
+			lon: aOpt.position.lon
 		})
 				
 		self.setCameraPosition({
@@ -683,101 +691,9 @@ GLWorld.World = function (aOpt) {
 		iTerrain.setTerrain({
 			worldCenter: true
 		});
-	}
-	/*
-	this.loadArea = function (aAreaId, aSrid) {		
 		
-		iAreaXml = null;
-		
-		iObjects3D.remove();
-		
-		setSrid(aSrid);
-		
-		
-		var url = "/lifepilotjs/Playground?action=get_area3d&language=10&area3d_id=" + aAreaId + "&srid=" + self.center.srid;
-		var xmlHttp = new LP_XMLHTTP();
-		xmlHttp.getUrl(url, onAreaBack, "xml");
 	};
 	
-	function onAreaBack (aXmlDoc) {
-		iAreaXml = aXmlDoc;
-		
-		setCenter(null, null);
-						
-		var startPos = getStartPos();
-		
-		self.setCameraPosition({
-			offs: {x: startPos.x, y: startPos.y},						
-			elev: 0,
-			ry: startPos.ry
-		});
-		
-		setTimeout(function () {
-			iObjects3D.load(iAreaXml);
-		}, 2000);
-		
-		iTerrain.setTerrain({
-			areaCoords: self.getAreaCoords()
-		});
-		
-		if (self.map) {
-			self.map.hs.initPlayers(self.center.srid, self.cameraCtrl.position);
-		}
-		
-		if (self.positioning) {
-			self.positioning.positionOn(false);
-		}
-	}
-	
-	function getStartPos () {
-		var x = 0;
-		var y = 0;
-		//var setElev = iAttrs.terrElev;
-		//var savedElev = iAttrs.defElev;
-		var yaw = 0;
-		
-		if (iAreaXml) {
-			var startItems = iAreaXml.getElementsByTagName("START_POS_ITEM");
-			var i = 0;
-			var lng = startItems.length;
-			for (i = 0; i < lng; i++) {
-				var startItem = startItems.item(i);
-				var shName = iXmlTools.getChildNodeValue(startItem, "POSITION_SH_NAME");
-				if (shName === "3dw_pos1") {
-					var coord = parseCoordAndCalc(startItem);
-					if (coord) {
-						x = coord[0];
-						y = coord[1];
-						coord = null;
-					}
-					var dir = iXmlTools.getChildNodeValue(startItem, "DIRECTION");
-					if (dir) {
-						yaw = -ThreeD.Tools.deg2rad(dir);
-					}
-					
-					break;
-				}
-			}
-		}
-		
-		//placeUnityCamera(lX, lY, setElev, yaw);
-		
-		//return Number(savedElev);
-		
-		return {x: x, y: y, ry: yaw};
-	}
-	
-	function parseCoordAndCalc (aNode) {
-		var cArr = null;
-		var coord = iXmlTools.getChildNodeValue(aNode, "COORD");
-		if (coord) {
-			var cToks = coord.split(",");
-			var offs = calcOffs(Number(cToks[0].substring(1)), Number(cToks[1]) * -1);
-			cArr = [offs.x, offs.y];
-		}		
-		return cArr;
-	}
-	*/
 	function init (aOpt) {
 		initOptions(aOpt);
 		initScene();

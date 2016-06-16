@@ -245,8 +245,14 @@ GLWorld.Terrain = function (aOpt) {
 	
 	function addTerrain (aTrParams) {
 		var tr = aTrParams;
+		
+		$.ajax({
+		        url: tr.trUrl,
+		        dataType: "jsonp",
+		        jsonp: "jsonp",
+		        success: function ( json ) {
 				
-		$.getJSON( tr.trUrl, function( json ) {
+		//$.getJSON( tr.trUrl, function( json ) {
 						
 			var geometry = new THREE.PlaneBufferGeometry( tr.units.xSize, tr.units.ySize, tr.segm, tr.segm );
 			
@@ -292,12 +298,13 @@ GLWorld.Terrain = function (aOpt) {
 			if (tr.placeCamera) {
 				self.onTerrain = true;
 			}
+		}
 		});
 	}
 	
 	function removeTerrain () {
 		GLWorld.Tools.removeChildren(self.terrObj);
-		
+				
 		iTerrAttrs.currType = null;
 		iTerrAttrs.mapId = null;
 		iTerrAttrs.b3dBox = null;

@@ -11,15 +11,28 @@
 		<script src="js/lib/proj4.js"></script>
 		<script src="js/lib/three-r77/build/three.min.js"></script>
 		<script src="js/lib/three-GLWorld/PointerLockControls.js"></script>
+		<script src="js/lib/three-r77/examples/js/effects/StereoEffect.js"></script>
+		<script src="js/lib/three-r77/examples/js/controls/DeviceOrientationControls.js"></script>
 		
 		<script src="js/utils_gl.js"></script>
 		<script src="js/terrain_gl.js"></script>
+		<script src="js/vr_gl.js"></script>
 		<script src="js/world_gl.js"></script>
+		<script src="js/map_gl.js"></script>
+		
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZubUD2PGl9Qz_KMI94In9AQf8H7BTvuA"></script>
 		
 		<script>
-			function startGLWorld() {
-				var glworld = new GLWorld.World({
+			var glWorld = null;
+			var glMap = null;
 					
+			function startGLWorld() {
+				glWorld = new GLWorld.World({
+					
+				});
+				
+				glMap = new GLWorld.Map({
+					world: glWorld
 				});
 			};
 		</script>
@@ -28,6 +41,25 @@
 		<div id="container_3d" style="width: 100%; height: 100%"/>
 		<div id="instructions_no_pl" style="display:none;position:absolute;width:100%;text-align:center;font-size:11px;color:rgba(255,255,255,0.5);">
 			W, A, S, D - Move, SPACE - Jump, MOUSE down & move - Look around<br/>1, 2 - Camera height
+		</div>
+		<div id="parentMapDiv" style="position: absolute; width: 100%; height: 100%;">			
+			
+			<div style="position: absolute; width: 100%; height: 100%; background-color:black; filter:alpha(opacity=70);-moz-opacity:.70;opacity:.70;"></div>
+			
+			<div style="position: absolute; width: 100%; height: 100%;">
+				<table cellspacing="0px" cellpadding="0px" style="width: 100%; height: 100%;">
+					<tr>
+						<td style="text-align:center">
+							<div id="map" style="width:500px; height:500px; display:inline-block"></div>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align:center">
+							<input type="button" onclick="glMap.go()" value="Explore it!" style="width:100px; height:100px"></input>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</body>
 </html>
