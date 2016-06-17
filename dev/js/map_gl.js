@@ -1,10 +1,12 @@
 
 GLWorld.Map = function (aOpt) {
+	var self = this;
 	var iWorld = null;
 	var iOptions = {
 		img: { src: "../dev/media/img/map_64.png" },
 		mapDiv: {
-			id: "parentMapDiv"
+			id: "parentMapDiv",
+			btnId: "goButton"
 		}
 	};
 	var map = null;
@@ -46,7 +48,7 @@ GLWorld.Map = function (aOpt) {
 	function initGoogleMap () {
 		map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 0, lng: 0},
-          zoom: 1
+          zoom: 2
         });
 		
 		google.maps.event.addListener(map, "click", function (e) {
@@ -66,7 +68,7 @@ GLWorld.Map = function (aOpt) {
 		});
 	}
 	
-	this.go = function () {		
+	this.go = function () {
 		if (iLocation.latLng) {		
 			hideMap();
 			
@@ -87,6 +89,20 @@ GLWorld.Map = function (aOpt) {
 		addMapButton();
 		
 		initGoogleMap();
+		
+		var btn = document.getElementById(iOptions.mapDiv.btnId);
+		
+		if (Browser.touch) {
+			btn.addEventListener("touchstart", function() {
+				self.go();
+			}, false);
+		}
+		else {
+			btn.addEventListener("click", function() {
+				self.go();
+			}, false);
+		}
+		
 	}	
 	
 	init(aOpt);

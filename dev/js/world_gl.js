@@ -193,87 +193,7 @@ GLWorld.World = function (aOpt) {
 		self.cameraCtrl = self.controls.getObject();
 		
 		self.scene.add( self.cameraCtrl );
-		/*		
-		if (iOptions.usePointerLock) {	
 		
-			var instructions = document.getElementById( self.attrs.instruct.contId );
-			instructions.style.display = '';
-			
-			var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
-			if ( havePointerLock ) {				
-				
-				var element = document.body;
-				var pointerlockchange = function ( event ) {
-	
-					if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
-	
-						self.controls.enabled = true;
-						
-						instructions.style.display = 'none';
-	
-					} else {
-						self.controls.enabled = false;
-						
-						instructions.style.display = '';
-					}
-				};
-	
-				var pointerlockerror = function ( event ) {
-	
-					instructions.style.display = '';
-				};				
-				
-				// Hook pointer lock state change events
-				document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-				document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-				document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
-	
-				document.addEventListener( 'pointerlockerror', pointerlockerror, false );
-				document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
-				document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
-				
-				instructions.addEventListener( 'click', function ( event ) {
-	
-					instructions.style.display = 'none';
-	
-					// Ask the browser to lock the pointer
-					element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-	
-					if ( /Firefox/i.test( navigator.userAgent ) ) {
-	
-						var fullscreenchange = function ( event ) {
-	
-							if ( document.fullscreenElement === element || document.mozFullscreenElement === element || document.mozFullScreenElement === element ) {
-	
-								document.removeEventListener( 'fullscreenchange', fullscreenchange );
-								document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
-	
-								element.requestPointerLock();
-							}
-	
-						};
-	
-						document.addEventListener( 'fullscreenchange', fullscreenchange, false );
-						document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
-	
-						element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
-	
-						element.requestFullscreen();
-	
-					} else {
-	
-						element.requestPointerLock();
-	
-					}
-	
-				}, false );			
-			}
-			else {
-				document.getElementById( 'instructions_msg' ).innerHTML = "This browser does not support Pointer Lock API which is used for looking around with mouse.<br/><br/>You can also try Oculus or Cardboard modes by click the icons in the upper right corner.";
-			}
-		}
-		else {
-		*/
 			self.controls.speed = 0.004;			
 			
 			var enableControls = function (evt) {
@@ -310,8 +230,7 @@ GLWorld.World = function (aOpt) {
 			setTimeout(function () {
 				$("#" + self.attrs.instruct.noPLId).fadeOut("slow");				
 			}, 5000);
-			
-		//}
+		
 	}
 	
 	function initControls () {
@@ -319,7 +238,7 @@ GLWorld.World = function (aOpt) {
 		if (iOptions.useControls) {			
 			initPointerLockControls();	
 		}
-			
+		
 		var onKeyDown = function ( event ) {
 			
 			switch ( event.keyCode ) {
