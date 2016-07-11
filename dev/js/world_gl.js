@@ -19,7 +19,7 @@ GLWorld.World = function (aOpt) {
 	var velocity = new THREE.Vector3();
 	var canJump = false;
 	
-	var iRays = {/*front: null, back: null, left: null, right: null,*/ down: null, stepDown: 8};
+	var iRays = {/*front: null, back: null, left: null, right: null,*/ down: null, downInf: null, stepDown: 8, prevTopDist: 0};
 	
 	var iTerrain = null;
 	
@@ -27,7 +27,7 @@ GLWorld.World = function (aOpt) {
 	var iSkybox = null;
 	
 	this.sceneOptions = {size: {width: window.innerWidth, height: window.innerHeight}};
-	var iOptions = {useControls: true, allowControls: true, /*usePointerLock: false,*/ cubeSize: {x: 5000, y: 5000, z: 5000}};
+	var iOptions = {useControls: true, allowControls: true, /*usePointerLock: false,*/ cubeSize: {x: 5000, y: 5000, z: 5000}, maxElev: 8900};
 	this.attrs = {cont3d: {id: "container_3d"}, instruct: {contId: "instructions_cont", noPLId: "instructions_no_pl"}};
 	/*
 	this.sceneObjects = null;
@@ -321,6 +321,8 @@ GLWorld.World = function (aOpt) {
 		iRays.left = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3(), 0, rayDist );
 		iRays.right = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3(), 0, rayDist );
 		*/
+		
+		iRays.downInf = new THREE.Raycaster( new THREE.Vector3(0, iOptions.maxElev, 0), new THREE.Vector3( 0, -1, 0 ), 0, iOptions.maxElev + 100);
 	}
 	
 	function changePlayerHeight (aOffs) {
@@ -484,8 +486,27 @@ GLWorld.World = function (aOpt) {
 							canJump = true;	
 						}
 					}
-					else {					
-						velocity.y = 30;					
+					else {
+						iRays.downInf.ray.origin.x = cObj.position.x;
+						iRays.downInf.ray.origin.z = cObj.position.z;
+						var intersectsDown = iRays.downInf.intersectObjects( iTerrain.terrObj.children );
+						
+						if (intersectsDown.length > 0) {
+							var topDist = intersectsDown[0].distance;
+							
+							if (topDist === iRays.prevTopDist) {
+								var terrHgt = iOptions.maxElev - topDist;
+								var highHgt = 20;
+								if ((terrHgt - cObj.position.y) > highHgt) {
+									cObj.translateY( terrHgt - cObj.position.y - highHgt );
+								}
+							}
+							else {
+								iRays.prevTopDist = topDist;
+							}
+						}
+												
+						velocity.y = 20;			
 						cObj.translateY( velocity.y * delta );
 						
 						//canJump = true;
