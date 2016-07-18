@@ -16,6 +16,15 @@ GLWorld.Terrain = function (aOpt) {
 				iWorld = aOpt.world;
 			}
 		}
+		
+		var minSize = GLWorld.Tools.gup("minSize");
+		if (minSize !== "") {
+			iSizes.map.min = Number(minSize);
+		}
+		var initZoom = GLWorld.Tools.gup("initZoom");
+		if (initZoom !== "") {
+			iSizes.map.initMapZoom = Number(initZoom);
+		}
 	}
 		
 	this.setTerrain = function (aOpt) {

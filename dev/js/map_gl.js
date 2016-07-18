@@ -103,6 +103,19 @@ GLWorld.Map = function (aOpt) {
 			}, false);
 		}
 		
+		var location = GLWorld.Tools.gup("location");
+		if (location !== "") {
+			hideMap();
+			
+			var toks = location.split(",");
+			
+			iWorld.goToLocation({
+				position: {
+					lat: Number(toks[0]),
+					lon: Number(toks[1])
+				}
+			});
+		}
 	}	
 	
 	init(aOpt);

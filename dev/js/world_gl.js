@@ -69,6 +69,9 @@ GLWorld.World = function (aOpt) {
 			if (aOpt.useControls) {
 				iOptions.useControls = aOpt.useControls;
 			}
+			if (aOpt.cameraHeight !== null) {
+				self.player.height = aOpt.cameraHeight;
+			}
 		}
 	}
 

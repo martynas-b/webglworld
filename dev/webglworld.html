@@ -48,8 +48,16 @@
 					
 			function startGLWorld() {
 				
+				var cameraHeight = GLWorld.Tools.gup("cameraHeight");
+				if (cameraHeight !== "") {
+					cameraHeight = Number(cameraHeight);
+				}
+				else {
+					cameraHeight = null;
+				}
+				
 				glWorld = new GLWorld.World({
-					
+					cameraHeight: cameraHeight
 				});
 				
 				glMap = new GLWorld.Map({
